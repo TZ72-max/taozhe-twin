@@ -299,8 +299,17 @@ function showToast(msg){const t=document.createElement('div');t.className='toast
 
 loadH();
 
-// 强制更新service worker
-if('serviceWorker'in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister()));navigator.serviceWorker.register('/sw.js?v=3')}
+// 强制最新版本
+const APP_VERSION='v6';
+if('serviceWorker'in navigator){
+  navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister()));
+  navigator.serviceWorker.register('/sw.js?v='+APP_VERSION);
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{window.location.reload()});
+}
+// 每次加载检查版本更新
+const lastVer=localStorage.getItem('taozhe-ver');
+if(lastVer&&lastVer!==APP_VERSION){localStorage.setItem('taozhe-ver',APP_VERSION);window.location.reload(true)}
+localStorage.setItem('taozhe-ver',APP_VERSION);
 </script>
 </body>
 </html>
