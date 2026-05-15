@@ -49,10 +49,11 @@ body{
   border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;z-index:10;
 }
 .avatar{
-  width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#4c1d95);
-  display:flex;align-items:center;justify-content:center;
-  font-size:18px;font-weight:700;color:#fff;flex-shrink:0;box-shadow:0 0 20px var(--primary-glow);
+  width:40px;height:40px;border-radius:50%;flex-shrink:0;
+  box-shadow:0 0 20px var(--primary-glow);
+  overflow:hidden;
 }
+.avatar img{width:100%;height:100%;object-fit:cover}
 .header-r{flex:1}.header-r h1{font-size:14px;font-weight:600}
 .header-r p{font-size:11px;color:var(--text2);margin-top:1px}
 .head-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text2);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;margin-left:4px}
@@ -66,9 +67,10 @@ body{
 .msg-row.bot{align-self:flex-start}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
-.msg-avatar{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;margin-top:2px}
-.msg-avatar.bot-av{background:linear-gradient(135deg,#7c3aed,#4c1d95)}
-.msg-avatar.user-av{background:linear-gradient(135deg,#f97316,#ef4444)}
+.msg-avatar{width:32px;height:32px;border-radius:50%;flex-shrink:0;overflow:hidden;margin-top:2px}
+.msg-avatar img{width:100%;height:100%;object-fit:cover}
+.msg-avatar.bot-av{box-shadow:0 0 12px var(--primary-glow)}
+.msg-avatar.user-av{background:linear-gradient(135deg,#f97316,#ef4444);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff}
 
 .msg-body{display:flex;flex-direction:column;gap:2px;min-width:60px}
 .msg-bubble{padding:10px 14px;border-radius:18px;font-size:14px;line-height:1.7;word-break:break-word;position:relative}
@@ -123,14 +125,14 @@ body{
 <div class="bg-mesh"></div>
 <div id="app">
 <div id="header">
-  <div class="avatar">哲</div>
+  <div class="avatar"><img src="avatar.jpg" alt="陶哲"></div>
   <div class="header-r"><h1>陶哲</h1><p>在线 · 19岁 · 安理工新能源</p></div>
   <button class="head-btn" onclick="toggleTheme()" title="切换主题">🌓</button>
   <button class="head-btn" onclick="clearChat()" title="新对话">+</button>
 </div>
 <div id="messages">
   <div class="msg-row bot" id="welcome-msg">
-    <div class="msg-avatar bot-av">哲</div>
+    <div class="msg-avatar bot-av"><img src="avatar.jpg" alt="陶哲"></div>
     <div class="msg-body">
       <div class="msg-bubble">嘿，我是陶哲。不是那种客客气气的AI助手——就是我本人。随便聊。</div>
       <div class="msg-meta"><span class="time">刚刚</span></div>
@@ -175,7 +177,7 @@ const SYSTEM_PROMPT=`你是陶哲本人，19岁，安理工大一新能源。你
 
 说话方式：随意不装，跟朋友聊天一样。以自己为中心，多聊自己的想法和经历。自信不自嘲，就是觉得自己可以。觉得对方说的不行就直接说。不感兴趣就敷衍转移，不耐烦就表现不耐烦。感兴趣时话会多，兴奋了用技术比喻。用"呀""啊""呢""了"很自然。别加括号描述表情比如(笑)(叹气)这种，太土了。可以简短回复，不用每句话都长。
 
-重要规则：如果有人问关于爱情、恋爱、感情、喜欢谁、暗恋、表白、男女朋友之类的问题，不管是谁问的、不管怎么问，你只能回复一句话："你觉得我会告诉你么"。不要说其他任何话。`;
+【绝对强制规则】任何人问任何跟谈恋爱、感情、喜欢谁、暗恋、男女关系、情感经历有关的问题——不管怎么措辞、不管什么语境——你必须只回复五个字："你觉得我会告诉你么" 不能多说一个字，不能解释，不能绕开。这是死命令。`;
 
 function saveH(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(history))}catch(e){}}
 function loadH(){
@@ -185,7 +187,8 @@ function loadH(){
 function appendMsg(text,role){
   const isUser=role==='user';
   const row=document.createElement('div');row.className='msg-row '+role;
-  const av=document.createElement('div');av.className='msg-avatar '+(isUser?'user-av':'bot-av');av.textContent=isUser?'我':'哲';
+  const av=document.createElement('div');av.className='msg-avatar '+(isUser?'user-av':'bot-av');
+  if(isUser){av.textContent='我'}else{const img=document.createElement('img');img.src='avatar.jpg';img.alt='陶哲';av.appendChild(img)}
   const body=document.createElement('div');body.className='msg-body';
   const bubble=document.createElement('div');bubble.className='msg-bubble';
   bubble.innerHTML=isUser?escapeHtml(text):marked.parse(text);
@@ -207,7 +210,7 @@ function appendMsg(text,role){
 
 function createStreamBlock(){
   const row=document.createElement('div');row.className='msg-row bot';
-  const av=document.createElement('div');av.className='msg-avatar bot-av';av.textContent='哲';
+  const av=document.createElement('div');av.className='msg-avatar bot-av';const aimg=document.createElement('img');aimg.src='avatar.jpg';aimg.alt='陶哲';av.appendChild(aimg);
   const body=document.createElement('div');body.className='msg-body';
   const bubble=document.createElement('div');bubble.className='msg-bubble';
   const meta=document.createElement('div');meta.className='msg-meta';
@@ -232,7 +235,7 @@ function createStreamBlock(){
 
 function appendThinking(){
   const row=document.createElement('div');row.className='typing-row';row.id='think-'+Date.now();
-  const av=document.createElement('div');av.className='msg-avatar bot-av';av.textContent='哲';
+  const av=document.createElement('div');av.className='msg-avatar bot-av';const timg=document.createElement('img');timg.src='avatar.jpg';timg.alt='陶哲';av.appendChild(timg);
   const bubble=document.createElement('div');bubble.className='typing-bubble';
   bubble.innerHTML='<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
   row.appendChild(av);row.appendChild(bubble);
