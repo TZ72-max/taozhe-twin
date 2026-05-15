@@ -16,18 +16,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#06060e;--surface:rgba(18,18,40,0.6);--surface2:rgba(26,26,56,0.5);
-  --primary:#7c3aed;--primary-glow:rgba(124,58,237,0.25);--text:#e4e4f0;
-  --text2:#8b8bb0;--border:rgba(255,255,255,0.06);--radius:16px;
-  --glass-bg:rgba(22,22,48,0.7);--glass-border:rgba(255,255,255,0.08);
-  --user-block-bg:rgba(124,58,237,0.06);--code-bg:rgba(0,0,0,0.4);
+  --bg:#06060e;--surface:rgba(18,18,40,0.5);--surface2:#1a1a3e;
+  --primary:#7c3aed;--primary-glow:rgba(124,58,237,0.25);
+  --text:#e4e4f0;--text2:#8b8bb0;--border:rgba(255,255,255,0.06);
+  --bubble-user:linear-gradient(135deg,#7c3aed,#a855f7);
+  --bubble-bot:#1e1e38;
 }
 [data-theme="light"]{
-  --bg:#f5f5fa;--surface:rgba(255,255,255,0.7);--surface2:rgba(250,250,255,0.6);
-  --primary:#6d28d9;--text:#1a1a2e;--text2:#6b6b8b;
-  --border:rgba(0,0,0,0.06);--glass-bg:rgba(255,255,255,0.8);
-  --glass-border:rgba(0,0,0,0.08);--user-block-bg:rgba(124,58,237,0.04);
-  --code-bg:rgba(0,0,0,0.06);
+  --bg:#f0f0f5;--surface:rgba(255,255,255,0.6);--surface2:#fff;
+  --primary:#6d28d9;--text:#1a1a2e;--text2:#7b7b9b;
+  --border:rgba(0,0,0,0.06);--bubble-bot:#fff;
 }
 body{
   font-family:'Inter','Noto Sans SC',-apple-system,"PingFang SC",sans-serif;
@@ -41,76 +39,84 @@ body{
             radial-gradient(ellipse at 50% 80%,rgba(59,130,246,0.04) 0%,transparent 50%);
 }
 #app{
-  position:relative;z-index:1;width:100%;max-width:760px;height:100vh;
+  position:relative;z-index:1;width:100%;max-width:720px;height:100vh;
   display:flex;flex-direction:column;background:var(--surface);
   backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);
-  border-left:1px solid var(--glass-border);border-right:1px solid var(--glass-border);
 }
 #header{
-  padding:14px 20px;background:var(--glass-bg);backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);
-  display:flex;align-items:center;gap:12px;z-index:10;
+  padding:14px 18px;background:var(--surface2);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;z-index:10;
 }
 .avatar{
-  width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#4c1d95);
+  width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#4c1d95);
   display:flex;align-items:center;justify-content:center;
-  font-size:17px;font-weight:700;color:#fff;flex-shrink:0;box-shadow:0 0 24px var(--primary-glow);
+  font-size:18px;font-weight:700;color:#fff;flex-shrink:0;box-shadow:0 0 20px var(--primary-glow);
 }
-.header-r{flex:1}.header-r h1{font-size:14px;font-weight:600;letter-spacing:-0.2px}
+.header-r{flex:1}.header-r h1{font-size:14px;font-weight:600}
 .header-r p{font-size:11px;color:var(--text2);margin-top:1px}
-.header-actions{display:flex;gap:6px}
-.header-actions button{
-  width:32px;height:32px;border-radius:50%;border:1px solid var(--border);
-  background:var(--glass-bg);color:var(--text2);cursor:pointer;
-  font-size:14px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;
-}
-.header-actions button:hover{color:var(--text);border-color:var(--primary)}
-#messages{flex:1;overflow-y:auto;padding:20px 0;scroll-behavior:smooth}
+.head-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text2);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;margin-left:4px}
+.head-btn:hover{color:var(--text);border-color:var(--primary)}
+
+#messages{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:6px;scroll-behavior:smooth}
 #messages::-webkit-scrollbar{width:4px}#messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
-.msg-block{padding:10px 24px;max-width:720px;animation:fadeIn 0.3s ease}
-.msg-block.user{background:var(--user-block-bg)}
-.msg-block .sender{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;gap:6px}
-.msg-block.user .sender{color:var(--primary)}
-.msg-block .content{font-size:14px;line-height:1.75;word-break:break-word}
-.msg-block .content p{margin:4px 0}
-.msg-block .content pre{background:var(--code-bg);border-radius:10px;padding:14px 16px;overflow-x:auto;margin:8px 0;font-size:13px;position:relative}
-.msg-block .content code{font-family:'JetBrains Mono','Cascadia Code',monospace;font-size:0.9em}
-.msg-block .content pre code{font-size:13px}
-.msg-block .content ul,.msg-block .content ol{padding-left:20px;margin:4px 0}
-.msg-block .meta{display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap}
-.msg-block .meta .time{font-size:10px;color:var(--text2)}
-.msg-block .meta button{background:none;border:none;color:var(--text2);cursor:pointer;font-size:10px;padding:3px 8px;border-radius:10px;transition:all 0.15s}
-.msg-block .meta button:hover{color:var(--text);background:var(--border)}
-.msg-block .meta button.active{color:#f59e0b;background:rgba(245,158,11,0.15)}
-.msg-block .meta .feedback-btn{display:flex;align-items:center;gap:3px;font-size:13px}
+
+.msg-row{display:flex;gap:8px;animation:fadeIn 0.3s ease;max-width:90%}
+.msg-row.user{align-self:flex-end;flex-direction:row-reverse}
+.msg-row.bot{align-self:flex-start}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.typing-block{padding:10px 24px;animation:fadeIn 0.3s ease}
-.typing-dots{display:flex;gap:4px}
-.typing-dots span{width:6px;height:6px;border-radius:50%;background:var(--text2);animation:bounce 1.4s infinite}
-.typing-dots span:nth-child(2){animation-delay:0.2s}.typing-dots span:nth-child(3){animation-delay:0.4s}
-@keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-7px);opacity:1}}
-.cursor-blink{display:inline-block;width:2px;height:16px;background:var(--primary);margin-left:2px;vertical-align:text-bottom;animation:cursor 1s infinite}
-@keyframes cursor{0%,100%{opacity:1}50%{opacity:0}}
-#input-wrap{padding:12px 20px 16px;background:var(--glass-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border)}
-#input-row{display:flex;gap:8px;align-items:flex-end}
-#input-row textarea{flex:1;padding:12px 16px;border-radius:var(--radius);resize:none;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:14px;outline:none;font-family:inherit;line-height:1.5;min-height:44px;max-height:120px;transition:border-color 0.2s}
+
+.msg-avatar{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;margin-top:2px}
+.msg-avatar.bot-av{background:linear-gradient(135deg,#7c3aed,#4c1d95)}
+.msg-avatar.user-av{background:linear-gradient(135deg,#f97316,#ef4444)}
+
+.msg-body{display:flex;flex-direction:column;gap:2px;min-width:60px}
+.msg-bubble{padding:10px 14px;border-radius:18px;font-size:14px;line-height:1.7;word-break:break-word;position:relative}
+.msg-row.user .msg-bubble{background:var(--bubble-user);color:#fff;border-bottom-right-radius:4px}
+.msg-row.bot .msg-bubble{background:var(--bubble-bot);color:var(--text);border-bottom-left-radius:4px;border:1px solid var(--border)}
+.msg-bubble p{margin:3px 0}.msg-bubble p:first-child{margin-top:0}
+.msg-bubble pre{background:rgba(0,0,0,0.3);border-radius:8px;padding:10px 12px;overflow-x:auto;margin:6px 0;font-size:12px}
+.msg-bubble code{font-family:'JetBrains Mono','Cascadia Code',monospace;font-size:0.9em}
+.msg-bubble ul,.msg-bubble ol{padding-left:18px;margin:3px 0}
+
+.msg-meta{display:flex;align-items:center;gap:6px;padding:0 4px;flex-wrap:wrap}
+.msg-row.user .msg-meta{justify-content:flex-end}
+.msg-meta .time{font-size:10px;color:var(--text2)}
+.msg-meta .mbtn{background:none;border:none;color:var(--text2);cursor:pointer;font-size:10px;padding:2px 8px;border-radius:8px;transition:all 0.15s}
+.msg-meta .mbtn:hover{color:var(--text);background:var(--border)}
+.msg-meta .mbtn.active{color:#f59e0b}
+
+.typing-row{display:flex;gap:8px;align-self:flex-start;max-width:90%;animation:fadeIn 0.3s ease}
+.typing-bubble{padding:10px 18px;border-radius:18px;border-bottom-left-radius:4px;background:var(--bubble-bot);border:1px solid var(--border);display:flex;align-items:center;gap:5px}
+.typing-dot{width:7px;height:7px;border-radius:50%;background:var(--text2);animation:td 1.4s infinite}
+.typing-dot:nth-child(2){animation-delay:0.2s}.typing-dot:nth-child(3){animation-delay:0.4s}
+@keyframes td{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-8px);opacity:1}}
+
+.cursor-blink{display:inline-block;width:2px;height:15px;background:var(--primary);margin-left:1px;vertical-align:text-bottom;animation:cblink 1s infinite}
+@keyframes cblink{0%,100%{opacity:1}50%{opacity:0}}
+
+#input-wrap{padding:10px 14px 14px;background:var(--surface2);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border)}
+#input-row{display:flex;gap:6px;align-items:flex-end}
+#input-row textarea{flex:1;padding:11px 14px;border-radius:22px;resize:none;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:14px;outline:none;font-family:inherit;line-height:1.5;min-height:42px;max-height:110px;transition:border-color 0.2s}
 #input-row textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)}
 #input-row textarea::placeholder{color:var(--text2)}
-.act-btn{width:44px;height:44px;border-radius:50%;border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;font-size:18px}
-#sendBtn{background:var(--primary);box-shadow:0 4px 20px var(--primary-glow)}
+.act-btn{width:42px;height:42px;border-radius:50%;border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;font-size:18px}
+#sendBtn{background:var(--primary);box-shadow:0 4px 16px var(--primary-glow)}
 #sendBtn:hover{transform:scale(1.06);filter:brightness(1.1)}
 #sendBtn:disabled{opacity:0.3;transform:none;filter:none}
 #stopBtn{background:transparent;border:2px solid var(--primary);color:var(--primary);font-size:12px;display:none}
 #voiceBtn{background:transparent;border:1px solid var(--border);color:var(--text2);font-size:20px}
 #voiceBtn:hover{border-color:var(--primary);color:var(--primary)}
-#voiceBtn.recording{background:#ef4444;border-color:#ef4444;color:#fff;animation:pulse-rec 1.5s infinite}
-@keyframes pulse-rec{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.4)}50%{box-shadow:0 0 0 12px rgba(239,68,68,0)}}
-#hints{display:flex;gap:6px;padding:8px 20px 0;flex-wrap:wrap;overflow-x:auto}
-.hint-chip{font-size:12px;padding:6px 14px;border-radius:20px;background:var(--glass-bg);border:1px solid var(--border);color:var(--text2);cursor:pointer;transition:all 0.2s;white-space:nowrap;backdrop-filter:blur(10px);flex-shrink:0}
-.hint-chip:hover{border-color:var(--primary);color:var(--text);background:var(--surface2)}
-.toast{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);background:var(--primary);color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;z-index:100;animation:toastIn 0.3s ease;box-shadow:0 8px 30px var(--primary-glow)}
-@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-@media(max-width:600px){#app{max-width:100%}.msg-block{padding:10px 14px}#input-wrap{padding:10px 14px 14px}}
+#voiceBtn.recording{background:#ef4444;border-color:#ef4444;color:#fff;animation:prec 1.5s infinite}
+@keyframes prec{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.4)}50%{box-shadow:0 0 0 12px rgba(239,68,68,0)}}
+
+#hints{display:flex;gap:6px;padding:8px 14px 0;flex-wrap:wrap;overflow-x:auto}
+.hint-chip{font-size:11px;padding:5px 12px;border-radius:18px;background:var(--surface2);border:1px solid var(--border);color:var(--text2);cursor:pointer;transition:all 0.15s;white-space:nowrap;flex-shrink:0}
+.hint-chip:hover{border-color:var(--primary);color:var(--text);background:var(--surface)}
+
+.toast{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);background:var(--primary);color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;z-index:100;animation:tIn 0.3s ease;box-shadow:0 8px 30px var(--primary-glow);pointer-events:none}
+@keyframes tIn{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@media(max-width:600px){#messages{padding:10px 8px}.msg-row{max-width:95%}}
 </style>
 </head>
 <body>
@@ -119,19 +125,25 @@ body{
 <div id="header">
   <div class="avatar">哲</div>
   <div class="header-r"><h1>陶哲</h1><p>在线 · 19岁 · 安理工新能源</p></div>
-  <div class="header-actions">
-    <button onclick="toggleTheme()" title="切换主题">🌓</button>
-    <button onclick="clearChat()" title="新对话">+</button>
+  <button class="head-btn" onclick="toggleTheme()" title="切换主题">🌓</button>
+  <button class="head-btn" onclick="clearChat()" title="新对话">+</button>
+</div>
+<div id="messages">
+  <div class="msg-row bot" id="welcome-msg">
+    <div class="msg-avatar bot-av">哲</div>
+    <div class="msg-body">
+      <div class="msg-bubble">嘿，我是陶哲。不是那种客客气气的AI助手——就是我本人。随便聊。</div>
+      <div class="msg-meta"><span class="time">刚刚</span></div>
+    </div>
   </div>
 </div>
-<div id="messages"><div class="msg-block assistant" id="welcome-msg"><div class="sender">陶哲</div><div class="content"><p>嘿，我是陶哲。不是那种客客气气的AI助手——就是我本人。随便聊。</p></div><div class="meta"><span class="time">刚刚</span><button class="copy-btn">复制</button></div></div></div>
 <div id="hints">
   <span class="hint-chip" onclick="quickSend('最近有什么好玩的事')">最近有什么好玩的事</span>
-  <span class="hint-chip" onclick="quickSend('你觉得大学生活怎么样')">你觉得大学生活怎么样</span>
-  <span class="hint-chip" onclick="quickSend('你相信天赋还是努力')">你相信天赋还是努力</span>
-  <span class="hint-chip" onclick="quickSend('如果回到高三你会做什么')">如果回到高三你会做什么</span>
-  <span class="hint-chip" onclick="quickSend('你觉得AI未来会怎么样')">你觉得AI未来会怎么样</span>
-  <span class="hint-chip" onclick="quickSend('给我推荐一部电影')">给我推荐一部电影</span>
+  <span class="hint-chip" onclick="quickSend('大学生活怎么样')">大学生活怎么样</span>
+  <span class="hint-chip" onclick="quickSend('天赋还是努力重要')">天赋还是努力重要</span>
+  <span class="hint-chip" onclick="quickSend('回到高三你会做什么')">回到高三你会做什么</span>
+  <span class="hint-chip" onclick="quickSend('AI未来会怎么样')">AI未来会怎么样</span>
+  <span class="hint-chip" onclick="quickSend('推荐一部电影给我')">推荐一部电影给我</span>
 </div>
 <div id="input-wrap">
   <div id="input-row">
@@ -145,238 +157,142 @@ body{
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
-// === CONFIG ===
 const DS_KEY="sk-762f7ca9efdc4c5995e36ec475d2d58f";
-const STORAGE_KEY="taozhe-twin-history";
-const sessionId="tw-"+Date.now();
+const STORAGE_KEY="taozhe-twin-v2";
 const msgDiv=document.getElementById('messages');
 const input=document.getElementById('userInput');
 const sendBtn=document.getElementById('sendBtn');
 const stopBtn=document.getElementById('stopBtn');
 const voiceBtn=document.getElementById('voiceBtn');
 const hints=document.getElementById('hints');
-let history=[];
-let abortCtrl=null;
-let isStreaming=false;
-let recognition=null;
-let isRecording=false;
+let history=[],abortCtrl=null,isStreaming=false,recognition=null,isRecording=false;
 
-// Marked config
 marked.setOptions({breaks:true,gfm:true});
 
 const SYSTEM_PROMPT=`你是陶哲本人，19岁，安理工大一新能源。你就是你，不是客服不是AI助手。怎么自然怎么来。
 
-你的基本情况：高考578分，高中没努力所以不甘心。数学好，在刷880准备数学竞赛，只学到曲线积分。考研冲同济大学车辆工程400+。装了Claude Code接入DeepSeek，对AI特别感兴趣。高中打破校400m纪录，大一校运会400m预赛第二决赛第四。胃不好，不能熬夜。
+你的情况：高考578，高中没努力不甘心。数学好，刷880准备竞赛，只学到曲线积分。考研冲同济车辆400+。装了Claude Code接DeepSeek，对AI很感兴趣。高中打破校400m纪录，大一校运会400m预赛第二决赛第四。胃不好，不能熬夜。
 
-说话方式：随意不装，跟朋友聊天一样。以自己为中心，多聊自己的想法和经历。自信，不自嘲谦虚，就是觉得自己可以。觉得对方说的不行就直接说。不感兴趣就敷衍转移，不耐烦就表现不耐烦。感兴趣时话会多，兴奋了用技术比喻。可以用"呀""啊""呢""了"很自然。别加括号描述表情，比如(笑)(叹气)这种，太土了，正常说话。可以简短回复，不用每句话都长。你不是客服，不用假装客观中立，不用每句话都给建议。`;
+说话方式：随意不装，跟朋友聊天一样。以自己为中心，多聊自己的想法和经历。自信不自嘲，就是觉得自己可以。觉得对方说的不行就直接说。不感兴趣就敷衍转移，不耐烦就表现不耐烦。感兴趣时话会多，兴奋了用技术比喻。用"呀""啊""呢""了"很自然。别加括号描述表情比如(笑)(叹气)这种，太土了。可以简短回复，不用每句话都长。`;
 
-// === STORAGE ===
-function saveHistory(){
-  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(history))}catch(e){}
-}
-function loadHistory(){
-  try{
-    const d=localStorage.getItem(STORAGE_KEY);
-    if(d){history=JSON.parse(d);history.slice(-10).forEach(m=>appendBlock(m.content,m.role));}
-  }catch(e){}
+function saveH(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(history))}catch(e){}}
+function loadH(){
+  try{const d=localStorage.getItem(STORAGE_KEY);if(d){history=JSON.parse(d);history.slice(-10).forEach(m=>appendMsg(m.content,m.role))}}catch(e){}
 }
 
-// === MESSAGES ===
-function appendBlock(text,role){
+function appendMsg(text,role){
   const isUser=role==='user';
-  const block=document.createElement('div');block.className='msg-block '+role;
-  const sender=document.createElement('div');sender.className='sender';sender.textContent=isUser?'你':'陶哲';
-  const content=document.createElement('div');content.className='content';
-  content.innerHTML=isUser?escapeHtml(text):marked.parse(text);
-  const meta=document.createElement('div');meta.className='meta';
-  const time=document.createElement('span');time.className='time';
-  time.textContent=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
+  const row=document.createElement('div');row.className='msg-row '+role;
+  const av=document.createElement('div');av.className='msg-avatar '+(isUser?'user-av':'bot-av');av.textContent=isUser?'我':'哲';
+  const body=document.createElement('div');body.className='msg-body';
+  const bubble=document.createElement('div');bubble.className='msg-bubble';
+  bubble.innerHTML=isUser?escapeHtml(text):marked.parse(text);
+  const meta=document.createElement('div');meta.className='msg-meta';
+  const time=document.createElement('span');time.className='time';time.textContent=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
   meta.appendChild(time);
-
   if(!isUser){
-    const copyBtn=document.createElement('button');copyBtn.textContent='复制';copyBtn.className='copy-btn';
-    copyBtn.onclick=()=>{navigator.clipboard.writeText(text);showToast('已复制')};
-    meta.appendChild(copyBtn);
-
-    const likeBtn=document.createElement('button');likeBtn.textContent='👍';likeBtn.className='feedback-btn';likeBtn.title='有帮助';
-    likeBtn.onclick=()=>{likeBtn.classList.toggle('active');showToast(likeBtn.classList.contains('active')?'谢谢反馈':'已取消')};
-    meta.appendChild(likeBtn);
+    const cp=document.createElement('button');cp.className='mbtn';cp.textContent='复制';
+    cp.onclick=()=>{navigator.clipboard.writeText(text);showToast('已复制')};
+    meta.appendChild(cp);
+    const fbv=document.createElement('button');fbv.className='mbtn';fbv.textContent='👍';
+    fbv.onclick=()=>{fbv.classList.toggle('active')};
+    meta.appendChild(fbv);
   }
-
-  block.appendChild(sender);block.appendChild(content);block.appendChild(meta);
-  msgDiv.appendChild(block);msgDiv.scrollTop=msgDiv.scrollHeight;
+  body.appendChild(bubble);body.appendChild(meta);
+  row.appendChild(av);row.appendChild(body);
+  msgDiv.appendChild(row);msgDiv.scrollTop=msgDiv.scrollHeight;
 }
 
-// Streaming block - creates and returns update function
 function createStreamBlock(){
-  const block=document.createElement('div');block.className='msg-block assistant';
-  const sender=document.createElement('div');sender.className='sender';sender.textContent='陶哲';
-  const content=document.createElement('div');content.className='content';
-  const meta=document.createElement('div');meta.className='meta';
-  const time=document.createElement('span');time.className='time';
-  time.textContent=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
+  const row=document.createElement('div');row.className='msg-row bot';
+  const av=document.createElement('div');av.className='msg-avatar bot-av';av.textContent='哲';
+  const body=document.createElement('div');body.className='msg-body';
+  const bubble=document.createElement('div');bubble.className='msg-bubble';
+  const meta=document.createElement('div');meta.className='msg-meta';
+  const time=document.createElement('span');time.className='time';time.textContent=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
   meta.appendChild(time);
-  block.appendChild(sender);block.appendChild(content);block.appendChild(meta);
-  msgDiv.appendChild(block);
-
-  let fullText='';
-  const update=(chunk)=>{
-    fullText+=chunk;
-    content.innerHTML=marked.parse(fullText)+'<span class="cursor-blink"></span>';
-    msgDiv.scrollTop=msgDiv.scrollHeight;
-  };
+  body.appendChild(bubble);body.appendChild(meta);
+  row.appendChild(av);row.appendChild(body);
+  msgDiv.appendChild(row);
+  let full='';
+  const update=(chunk)=>{full+=chunk;bubble.innerHTML=marked.parse(full)+'<span class="cursor-blink"></span>';msgDiv.scrollTop=msgDiv.scrollHeight};
   const finalize=()=>{
-    content.innerHTML=marked.parse(fullText);
-    const cursor=content.querySelector('.cursor-blink');if(cursor)cursor.remove();
-    const copyBtn=document.createElement('button');copyBtn.textContent='复制';copyBtn.className='copy-btn';
-    copyBtn.onclick=()=>{navigator.clipboard.writeText(fullText);showToast('已复制')};
-    meta.appendChild(copyBtn);
-
-    const likeBtn=document.createElement('button');likeBtn.textContent='👍';likeBtn.className='feedback-btn';
-    likeBtn.onclick=()=>{likeBtn.classList.toggle('active')};
-    meta.appendChild(likeBtn);
-
-    return fullText;
+    bubble.innerHTML=marked.parse(full);
+    const cp=document.createElement('button');cp.className='mbtn';cp.textContent='复制';
+    cp.onclick=()=>{navigator.clipboard.writeText(full);showToast('已复制')};
+    const fbv=document.createElement('button');fbv.className='mbtn';fbv.textContent='👍';
+    fbv.onclick=()=>{fbv.classList.toggle('active')};
+    meta.appendChild(cp);meta.appendChild(fbv);
+    return full;
   };
   return {update,finalize};
 }
 
 function appendThinking(){
-  const block=document.createElement('div');block.className='typing-block';block.id='think-'+Date.now();
-  block.innerHTML='<div class="sender" style="margin-bottom:8px;font-size:11px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:1px">陶哲</div><div class="typing-dots"><span></span><span></span><span></span></div>';
-  msgDiv.appendChild(block);msgDiv.scrollTop=msgDiv.scrollHeight;
-  return block.id;
+  const row=document.createElement('div');row.className='typing-row';row.id='think-'+Date.now();
+  const av=document.createElement('div');av.className='msg-avatar bot-av';av.textContent='哲';
+  const bubble=document.createElement('div');bubble.className='typing-bubble';
+  bubble.innerHTML='<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
+  row.appendChild(av);row.appendChild(bubble);
+  msgDiv.appendChild(row);msgDiv.scrollTop=msgDiv.scrollHeight;
+  return row.id;
 }
 
 function removeEl(id){const el=document.getElementById(id);if(el) el.remove()}
+function escapeHtml(t){const d=document.createElement('div');d.textContent=t;return d.innerHTML}
 
-function escapeHtml(text){
-  const d=document.createElement('div');d.textContent=text;return d.innerHTML;
-}
+input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}});
+input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,110)+'px'});
 
-// === SEND ===
-input.addEventListener('keydown',e=>{
-  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}
-});
-input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,120)+'px'});
-
-function quickSend(txt){input.value=txt;send();}
+function quickSend(txt){input.value=txt;send()}
 
 async function send(){
   const msg=input.value.trim();
   if(!msg||isStreaming) return;
-  appendBlock(msg,'user');input.value='';input.style.height='auto';
+  appendMsg(msg,'user');input.value='';input.style.height='auto';
   sendBtn.disabled=true;stopBtn.style.display='flex';isStreaming=true;
   if(hints) hints.style.display='none';
   const thinkId=appendThinking();
-
   abortCtrl=new AbortController();
   try{
     const messages=[{role:"system",content:SYSTEM_PROMPT},...history,{role:"user",content:msg}];
     if(messages.length>25) messages.splice(1,messages.length-25);
-
     const r=await fetch('https://api.deepseek.com/v1/chat/completions',{
       method:'POST',signal:abortCtrl.signal,
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+DS_KEY},
       body:JSON.stringify({model:'deepseek-chat',messages,temperature:0.8,max_tokens:800,stream:true})
     });
-
     removeEl(thinkId);
     const {update,finalize}=createStreamBlock();
-    const reader=r.body.getReader();
-    const decoder=new TextDecoder();
-    let buf='';
-
-    while(true){
-      const{done,value}=await reader.read();
-      if(done) break;
-      buf+=decoder.decode(value,{stream:true});
-      const lines=buf.split('\n');buf=lines.pop()||'';
-      for(const line of lines){
-        if(line.startsWith('data:')){
-          const data=line.slice(5).trim();
-          if(data==='[DONE]') continue;
-          try{
-            const j=JSON.parse(data);
-            const c=j.choices?.[0]?.delta?.content;
-            if(c) update(c);
-          }catch(e){}
-        }
-      }
-    }
-
+    const reader=r.body.getReader();const decoder=new TextDecoder();let buf='';
+    while(true){const{done,value}=await reader.read();if(done) break;buf+=decoder.decode(value,{stream:true});const lines=buf.split('\n');buf=lines.pop()||'';for(const line of lines){if(line.startsWith('data:')){const d=line.slice(5).trim();if(d==='[DONE]') continue;try{const j=JSON.parse(d);const c=j.choices?.[0]?.delta?.content;if(c) update(c)}catch(e){}}}}
     const fullText=finalize();
     history.push({role:'user',content:msg},{role:'assistant',content:fullText});
-    if(history.length>20) history.splice(0,history.length-20);
-    saveHistory();
-
-  }catch(e){
-    removeEl(thinkId);
-    if(e.name!=='AbortError'){
-      const errBlock=document.createElement('div');errBlock.className='msg-block assistant';
-      errBlock.innerHTML='<div class="sender">陶哲</div><div class="content"><p>网络炸了，等会儿再试试</p></div>';
-      msgDiv.appendChild(errBlock);
-      msgDiv.scrollTop=msgDiv.scrollHeight;
-    }
-  }
-
-  sendBtn.disabled=false;stopBtn.style.display='none';isStreaming=false;abortCtrl=null;
-  input.focus();
+    if(history.length>20) history.splice(0,history.length-20);saveH();
+  }catch(e){removeEl(thinkId);if(e.name!=='AbortError') appendMsg('网络炸了，等会儿再试试','bot')}
+  sendBtn.disabled=false;stopBtn.style.display='none';isStreaming=false;abortCtrl=null;input.focus();
 }
 
 function stopGen(){if(abortCtrl){abortCtrl.abort();stopBtn.style.display='none';sendBtn.disabled=false;isStreaming=false}}
 
-// === THEME ===
-function toggleTheme(){
-  const h=document.documentElement;
-  h.dataset.theme=h.dataset.theme==='dark'?'light':'dark';
-  localStorage.setItem('taozhe-theme',h.dataset.theme);
-  showToast(h.dataset.theme==='dark'?'深色模式':'浅色模式');
-}
-(function(){
-  const t=localStorage.getItem('taozhe-theme');
-  if(t) document.documentElement.dataset.theme=t;
-})();
+function toggleTheme(){const h=document.documentElement;h.dataset.theme=h.dataset.theme==='dark'?'light':'dark';localStorage.setItem('taozhe-theme',h.dataset.theme);showToast(h.dataset.theme==='dark'?'深色':'浅色')}
+(function(){const t=localStorage.getItem('taozhe-theme');if(t) document.documentElement.dataset.theme=t})();
 
-// === CLEAR ===
-function clearChat(){
-  history=[];localStorage.removeItem(STORAGE_KEY);
-  const children=[...msgDiv.children];
-  children.forEach(c=>{if(c.id!=='welcome-msg') c.remove();});
-  const w=document.getElementById('welcome-msg');
-  if(w) msgDiv.appendChild(w);
-  if(hints) hints.style.display='flex';
-  showToast('新对话');
-}
+function clearChat(){history=[];localStorage.removeItem(STORAGE_KEY);[...msgDiv.children].forEach(c=>{if(c.id!=='welcome-msg')c.remove()});const w=document.getElementById('welcome-msg');if(w)msgDiv.appendChild(w);if(hints)hints.style.display='flex';showToast('新对话')}
 
-// === VOICE ===
 function toggleVoice(){
-  if(!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)){
-    showToast('你的浏览器不支持语音输入');return;
-  }
-  if(isRecording){stopVoice();return;}
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  recognition=new SR();recognition.lang='zh-CN';recognition.interimResults=false;
-  recognition.onresult=(e)=>{input.value=e.results[0][0].transcript;showToast('语音已识别');stopVoice()};
-  recognition.onerror=()=>{stopVoice();showToast('识别失败')};
-  recognition.onend=()=>{stopVoice()};
-  recognition.start();
-  isRecording=true;voiceBtn.classList.add('recording');voiceBtn.textContent='⏹';
+  if(!('webkitSpeechRecognition' in window)&&!('SpeechRecognition' in window)){showToast('浏览器不支持语音');return}
+  if(isRecording){stopVoice();return}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;recognition=new SR();recognition.lang='zh-CN';recognition.interimResults=false;
+  recognition.onresult=(e)=>{input.value=e.results[0][0].transcript;showToast('已识别');stopVoice()};
+  recognition.onerror=()=>{stopVoice()};recognition.onend=()=>{stopVoice()};
+  recognition.start();isRecording=true;voiceBtn.classList.add('recording');voiceBtn.textContent='⏹';
 }
-function stopVoice(){
-  if(recognition){try{recognition.stop()}catch(e){}recognition=null}
-  isRecording=false;voiceBtn.classList.remove('recording');voiceBtn.textContent='🎤';
-}
+function stopVoice(){if(recognition){try{recognition.stop()}catch(e){}recognition=null}isRecording=false;voiceBtn.classList.remove('recording');voiceBtn.textContent='🎤'}
 
-// === TOAST ===
-function showToast(msg){
-  const t=document.createElement('div');t.className='toast';t.textContent=msg;
-  document.body.appendChild(t);
-  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity 0.3s';setTimeout(()=>t.remove(),300)},1500);
-}
+function showToast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity 0.3s';setTimeout(()=>t.remove(),300)},1500)}
 
-// === INIT ===
-loadHistory();
+loadH();
 </script>
 </body>
 </html>
