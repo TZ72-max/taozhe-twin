@@ -120,35 +120,26 @@ body{
 @keyframes cblink{0%,100%{opacity:1}50%{opacity:0}}
 
 /* 输入区 - 微信风格 */
-#input-wrap{padding:10px 12px 14px;background:var(--header-bg);border-top:1px solid var(--border-color)}
-#input-row{display:flex;gap:8px;align-items:flex-end}
-#input-row textarea{
-  flex:1;padding:10px 14px;border-radius:6px;resize:none;
-  border:1px solid var(--border-color);background:var(--bg);
+#input-wrap{padding:8px 14px 12px;background:var(--header-bg);border-top:1px solid var(--border-color)}
+#input-bar{display:flex;align-items:flex-end;gap:0;background:var(--bg);border:1px solid var(--border-color);border-radius:6px;padding:0 0 0 12px}
+#input-bar textarea{
+  flex:1;padding:10px 0;border:none;background:transparent;
   color:var(--text);font-size:15px;outline:none;font-family:inherit;
-  line-height:1.5;min-height:38px;max-height:100px;
+  line-height:1.5;min-height:36px;max-height:90px;resize:none;
 }
-#input-row textarea:focus{border-color:#07c160}
-#input-row textarea::placeholder{color:var(--text2)}
-#sendBtn{
-  width:36px;height:36px;border-radius:50%;border:none;
-  background:#07c160;color:#fff;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  font-size:16px;flex-shrink:0;transition:opacity 0.2s;
+#input-bar textarea::placeholder{color:var(--text2)}
+#input-bar .send-text{
+  padding:8px 14px;border:none;background:transparent;color:#07c160;
+  cursor:pointer;font-size:14px;flex-shrink:0;white-space:nowrap;
+  display:none;
 }
-#sendBtn:hover{opacity:0.85}#sendBtn:disabled{opacity:0.35}
-#stopBtn{
-  width:36px;height:36px;border-radius:50%;border:2px solid #07c160;
-  background:transparent;color:#07c160;cursor:pointer;
-  font-size:12px;flex-shrink:0;display:none;
+#input-bar .send-text.show{display:block}
+#input-bar .send-text:disabled{color:#ccc}
+#input-bar .voice-toggle{
+  padding:8px 4px 8px 0;border:none;background:transparent;
+  color:var(--text2);cursor:pointer;font-size:13px;flex-shrink:0;
 }
-#voiceBtn{
-  width:36px;height:36px;border-radius:50%;border:none;
-  background:transparent;color:var(--text2);cursor:pointer;
-  font-size:20px;flex-shrink:0;
-}
-#voiceBtn.recording{background:#ef4444;color:#fff;animation:prec 1.5s infinite}
-@keyframes prec{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.4)}50%{box-shadow:0 0 0 10px rgba(239,68,68,0)}}
+#input-bar .voice-toggle.recording{color:#ef4444}
 
 #hints{display:flex;gap:6px;padding:8px 14px 0;flex-wrap:wrap;overflow-x:auto}
 .hint-chip{
@@ -188,11 +179,10 @@ body{
   <span class="hint-chip" onclick="quickSend('推荐一部电影给我')">推荐一部电影给我</span>
 </div>
 <div id="input-wrap">
-  <div id="input-row">
-    <button id="voiceBtn" onclick="toggleVoice()" title="语音">🎤</button>
-    <textarea id="userInput" placeholder="发消息..." rows="1" autofocus></textarea>
-    <button id="stopBtn" onclick="stopGen()">■</button>
-    <button id="sendBtn" onclick="send()">↑</button>
+  <div id="input-bar">
+    <button class="voice-toggle" id="voiceBtn" onclick="toggleVoice()">语音</button>
+    <textarea id="userInput" placeholder="" rows="1" autofocus></textarea>
+    <button class="send-text" id="sendBtn" onclick="send()">发送</button>
   </div>
 </div>
 </div>
@@ -204,11 +194,17 @@ const STORAGE_KEY="taozhe-twin-v3";
 const msgDiv=document.getElementById('messages');
 const input=document.getElementById('userInput');
 const sendBtn=document.getElementById('sendBtn');
-const stopBtn=document.getElementById('stopBtn');
 const voiceBtn=document.getElementById('voiceBtn');
 const hints=document.getElementById('hints');
 let history=[],abortCtrl=null,isStreaming=false,recognition=null,isRecording=false;
-const APP_VERSION='v9';
+const APP_VERSION='v10';
+
+// 输入框有字显示发送，没字显示语音
+input.addEventListener('input',()=>{
+  input.style.height='auto';input.style.height=Math.min(input.scrollHeight,90)+'px';
+  if(input.value.trim()){sendBtn.classList.add('show');voiceBtn.style.display='none'}
+  else{sendBtn.classList.remove('show');voiceBtn.style.display=''}
+});
 
 marked.setOptions({breaks:true,gfm:true});
 
@@ -289,13 +285,14 @@ function escapeHtml(t){const d=document.createElement('div');d.textContent=t;ret
 input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}});
 input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,100)+'px'});
 
-function quickSend(txt){input.value=txt;send()}
+function quickSend(txt){input.value=txt;sendBtn.classList.add('show');voiceBtn.style.display='none';send()}
 
 async function send(){
   const msg=input.value.trim();
   if(!msg||isStreaming) return;
   appendMsg(msg,'user');input.value='';input.style.height='auto';
-  sendBtn.disabled=true;stopBtn.style.display='flex';isStreaming=true;
+  sendBtn.classList.remove('show');voiceBtn.style.display='';
+  sendBtn.disabled=true;sendBtn.textContent='...';isStreaming=true;
   if(hints) hints.style.display='none';
   const thinkId=appendThinking();
   abortCtrl=new AbortController();
@@ -315,10 +312,10 @@ async function send(){
     history.push({role:'user',content:msg},{role:'assistant',content:fullText});
     if(history.length>20) history.splice(0,history.length-20);saveH();
   }catch(e){removeEl(thinkId);if(e.name!=='AbortError') appendMsg('网络炸了，等会儿再试试','bot')}
-  sendBtn.disabled=false;stopBtn.style.display='none';isStreaming=false;abortCtrl=null;input.focus();
+  sendBtn.disabled=false;sendBtn.textContent='发送';isStreaming=false;abortCtrl=null;input.focus();
 }
 
-function stopGen(){if(abortCtrl){abortCtrl.abort();stopBtn.style.display='none';sendBtn.disabled=false;isStreaming=false}}
+function stopGen(){if(abortCtrl){abortCtrl.abort();sendBtn.disabled=false;sendBtn.textContent='发送';isStreaming=false}}
 
 function toggleTheme(){const h=document.documentElement;h.dataset.theme=h.dataset.theme==='dark'?'light':'dark';localStorage.setItem('taozhe-theme',h.dataset.theme);showToast(h.dataset.theme==='dark'?'深色模式':'浅色模式')}
 (function(){const t=localStorage.getItem('taozhe-theme');if(t) document.documentElement.dataset.theme=t})();
