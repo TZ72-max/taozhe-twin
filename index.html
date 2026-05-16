@@ -335,10 +335,6 @@ function stopVoice(){if(recognition){try{recognition.stop()}catch(e){}recognitio
 function showToast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity 0.3s';setTimeout(()=>t.remove(),300)},1500)}
 
 loadH();
-if('serviceWorker'in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister()));navigator.serviceWorker.register('/sw.js?v='+APP_VERSION)}
-const lv=localStorage.getItem('taozhe-ver');
-if(lv&&lv!==APP_VERSION){localStorage.setItem('taozhe-ver',APP_VERSION);window.location.reload(true)}
-localStorage.setItem('taozhe-ver',APP_VERSION);
 </script>
 </body>
 </html>
